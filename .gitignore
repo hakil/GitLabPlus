@@ -1,0 +1,21 @@
+# 构建产物
+build/
+out/
+.gradle/
+.intellijPlatform/
+
+# IDE 本地配置
+.idea/
+*.iml
+
+# 操作系统
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# 临时与备份
+*.bak
+*.tmp
+*.old
+*~
+*.log

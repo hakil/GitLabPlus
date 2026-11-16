@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idea-plugin>
+  <id>com.caidailian.gitlabplus</id>
+  <name>GitLab+ Merge Tool</name>
+  <version>0.2.0</version>
+  <vendor>caidailian</vendor>
+
+  <change-notes><![CDATA[
+    <h3>0.2.0</h3>
+    <ul>
+      <li>CI：多条流水线视图（含合并后目标分支那条）、触发/来源列、手动触发与重跑/取消、关注流水线并结束通知</li>
+      <li>Job 日志：着色、ANSI 与 CR 清理、中文字体适配、Ctrl+滚轮缩放与重置、跳末尾、自动刷新（运行中）</li>
+      <li>Diff：单文件超大 diff 截断，避免大 MR 卡顿；已读标记按 headSha 失效并主动清理</li>
+      <li>新建 MR：分支下拉带来源标注、按分支前缀推荐目标分支、未推送提交自动 push（不强推）、标题/描述模板</li>
+      <li>合并后：自动 fetch --all --prune，可选切到目标分支/删除已合并的本地源分支</li>
+      <li>设置：项目下拉双列表（刷新/左右移动/上下排序）、列表默认状态、新建 MR 默认勾选；Apply 后工具窗口自动重载</li>
+      <li>稳定性：所有 HTTP 与 git 调用增加超时；关注服务随插件卸载关闭；能力探测按账号缓存</li>
+    </ul>
+    <h3>0.1.0</h3>
+    <ul>
+      <li>初始版本：MR 列表/详情/操作、评审讨论、Diff 与行内评论、合并后刷新本地 Git</li>
+    </ul>
+  ]]></change-notes>
+
+  <description><![CDATA[
+    GitLab merge request workbench for IntelliJ IDEA: merge request list, details, review discussions,
+    diff with inline comments, CI pipelines and job logs, merge request creation, and local git follow-up after merge.
+    <p>独立实现的 GitLab 合并请求工作台，不依赖也不修改内置 GitLab 插件，可共存。</p>
+    <ul>
+      <li><b>列表</b>：按状态（all/opened/merged/closed）筛选、搜索、分页加载更多；项目下拉由设置里的双列表控制</li>
+      <li><b>详情与操作</b>：概览/描述（Markdown 渲染）/讨论/Changes/CI 五个页签；Merge、Squash and Merge、Approve、Revoke、Close、Reopen、Draft、Rebase、设置审阅人</li>
+      <li><b>评审</b>：讨论列表与回复、Resolve/Unresolve、👍 切换、发表评论</li>
+      <li><b>Diff</b>：逐文件 unified diff 渲染、选中行发评论或建议修改、已读标记（按 headSha 失效）</li>
+      <li><b>新建 MR</b>：分支下拉带本地/远程标注、按分支前缀推荐目标分支、未推送提交自动 push、标题与描述模板</li>
+      <li><b>CI</b>：该 MR 关联的多条流水线（含合并后目标分支那条）与 job、手动触发/重跑/取消、关注流水线并结束通知、job 日志着色查看（Ctrl+滚轮缩放、ANSI 清理）</li>
+      <li><b>合并后</b>：自动 fetch --all --prune，可选自动切到目标分支、删除已合并的本地源分支</li>
+    </ul>
+    <p>认证：单服务器 Personal Access Token（scope 需包含 api）；可从内置 GitLab 插件已保存的 token 导入。</p>
+  ]]></description>
+
+  <idea-version since-build="262" />
+
+  <depends>com.intellij.modules.platform</depends>
+  <depends>Git4Idea</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <notificationGroup id="GitLabPlus.Notifications" displayType="BALLOON" />
+
+    <applicationService serviceImplementation="com.caidailian.gitlabplus.settings.GitLabPlusSettings" />
+    <applicationService serviceImplementation="com.caidailian.gitlabplus.i18n.LanguageService" />
+
+    <applicationConfigurable
+        id="com.caidailian.gitlabplus.settings.GitLabPlusConfigurable"
+        displayName="GitLab+ Merge Tool"
+        instance="com.caidailian.gitlabplus.settings.GitLabPlusConfigurable" />
+
+    <toolWindow
+        id="GitLab+"
+        anchor="right"
+        icon="AllIcons.Vcs.Branch"
+        factoryClass="com.caidailian.gitlabplus.ui.GitLabToolWindowFactory" />
+  </extensions>
+</idea-plugin>
