@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.ViewedIndex;
+import com.hakil.gitlabplus.model.ViewedIndex;
 
 import org.junit.jupiter.api.Test;
 import java.util.List;

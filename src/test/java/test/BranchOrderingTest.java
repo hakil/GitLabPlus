@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.BranchOrdering;
+import com.hakil.gitlabplus.model.BranchOrdering;
 
 import org.junit.jupiter.api.Test;
 import java.util.List;

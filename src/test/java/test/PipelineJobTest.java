@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.PipelineJob;
+import com.hakil.gitlabplus.model.PipelineJob;
 import org.junit.jupiter.api.Test;
 import com.google.gson.JsonParser;
 

@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.PipelineState;
+import com.hakil.gitlabplus.model.PipelineState;
 
 /**
  * 流水线状态分类自测。

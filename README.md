@@ -7,7 +7,7 @@ IntelliJ IDEA 插件，在 IDE 内完成 GitLab 合并请求的列表浏览、�
 | 项目 | 值 |
 | --- | --- |
 | 版本 | 0.2.0 |
-| 插件 ID | `com.caidailian.gitlabplus` |
+| 插件 ID | `com.hakil.gitlabplus` |
 | 目标 IDE | IntelliJ IDEA 2026.2 及以上（`since-build=262`） |
 | 实现语言 | Java 25，`javac` 直接构建 |
 | 依赖模块 | `com.intellij.modules.platform`、`Git4Idea` |
@@ -174,7 +174,7 @@ build.gradle.kts             构建脚本（IntelliJ Platform Gradle Plugin 2.x�
 settings.gradle.kts          工程名
 gradle.properties            版本号、平台路径、编译参数
 gradle/wrapper/              Gradle wrapper
-src/main/java/com/caidailian/gitlabplus/
+src/main/java/com/hakil/gitlabplus/
   api/        GraphQL 查询、能力探测、REST 路径与客户端、JSON 解析
   git/        仓库与远端解析、分支列举与推送、合并后动作、进程执行封装
   i18n/       资源束入口、界面语言服务

@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.FontZoom;
+import com.hakil.gitlabplus.model.FontZoom;
 
 /**
  * 日志字号缩放规则自测。

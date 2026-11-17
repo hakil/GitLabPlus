@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.settings.OfficialGitLabTokenImporter;
+import com.hakil.gitlabplus.settings.OfficialGitLabTokenImporter;
 
 /**
  * 内置插件凭据解析的回归测试。

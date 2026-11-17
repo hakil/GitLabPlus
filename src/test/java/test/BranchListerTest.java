@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.git.BranchLister;
+import com.hakil.gitlabplus.git.BranchLister;
 
 import org.junit.jupiter.api.Test;
 import java.io.File;

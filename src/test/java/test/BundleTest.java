@@ -60,16 +60,16 @@ class BundleTest extends SuiteTestSupport {
 
     // 关键回归：显式请求英文时必须命中英文，不能回退到 JVM 默认（中文）
     TestAssert.eq("Locale.ENGLISH 命中英文", "Merge",
-                      com.caidailian.gitlabplus.i18n.GitLabPlusBundle.messageFor(
+                      com.hakil.gitlabplus.i18n.GitLabPlusBundle.messageFor(
                           java.util.Locale.ENGLISH, "detail.action.merge"));
     TestAssert.eq("Locale.ENGLISH 带参数", "Merge !217",
-                      com.caidailian.gitlabplus.i18n.GitLabPlusBundle.messageFor(
+                      com.hakil.gitlabplus.i18n.GitLabPlusBundle.messageFor(
                           java.util.Locale.ENGLISH, "merge.titleMerge", "217"));
     TestAssert.eq("Locale.SIMPLIFIED_CHINESE 命中中文", "合并",
-                      com.caidailian.gitlabplus.i18n.GitLabPlusBundle.messageFor(
+                      com.hakil.gitlabplus.i18n.GitLabPlusBundle.messageFor(
                           java.util.Locale.SIMPLIFIED_CHINESE, "detail.action.merge"));
     TestAssert.eq("缺键不影响", "no.such.key",
-                      com.caidailian.gitlabplus.i18n.GitLabPlusBundle.messageFor(
+                      com.hakil.gitlabplus.i18n.GitLabPlusBundle.messageFor(
                           java.util.Locale.ENGLISH, "no.such.key"));
     // 技术名词保留：英文侧与中文侧都应含 MR / CI 这类词
     TestAssert.eq("中文保留 MR", true, zh.getProperty("list.newMr").contains("MR"));

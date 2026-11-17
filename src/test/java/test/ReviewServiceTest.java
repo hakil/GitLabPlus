@@ -1,17 +1,17 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.Discussion;
+import com.hakil.gitlabplus.model.Discussion;
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.service.GitLabReviewService;
+import com.hakil.gitlabplus.service.GitLabReviewService;
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.service.GitLabService;
+import com.hakil.gitlabplus.service.GitLabService;
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.ui.MergeRequestDetailPanel;
+import com.hakil.gitlabplus.ui.MergeRequestDetailPanel;
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.ui.ReviewPanel;
+import com.hakil.gitlabplus.ui.ReviewPanel;
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.storage.ViewedNotesStore;
+import com.hakil.gitlabplus.storage.ViewedNotesStore;
 import org.junit.jupiter.api.Test;
 import com.google.gson.JsonParser;
 

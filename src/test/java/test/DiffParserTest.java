@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.DiffParser;
+import com.hakil.gitlabplus.model.DiffParser;
 import org.junit.jupiter.api.Test;
 import com.google.gson.JsonArray;
 import org.junit.jupiter.api.Test;

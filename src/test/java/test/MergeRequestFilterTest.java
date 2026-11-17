@@ -1,9 +1,9 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.MergeRequestFilter;
+import com.hakil.gitlabplus.model.MergeRequestFilter;
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.MergeRequestInfo;
+import com.hakil.gitlabplus.model.MergeRequestInfo;
 import org.junit.jupiter.api.Test;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.git.GitProjectResolver;
+import com.hakil.gitlabplus.git.GitProjectResolver;
 
 /**
  * GitProjectResolver.parseRemoteUrl 的纯函数自测（不依赖 IDE 运行时）。

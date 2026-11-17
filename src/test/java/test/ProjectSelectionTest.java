@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.ProjectSelection;
+import com.hakil.gitlabplus.model.ProjectSelection;
 
 import org.junit.jupiter.api.Test;
 import java.util.List;

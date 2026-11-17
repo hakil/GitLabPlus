@@ -7,7 +7,7 @@ An IntelliJ IDEA plugin for GitLab merge requests: browse the list, read details
 | Item | Value |
 | --- | --- |
 | Version | 0.2.0 |
-| Plugin ID | `com.caidailian.gitlabplus` |
+| Plugin ID | `com.hakil.gitlabplus` |
 | Target IDE | IntelliJ IDEA 2026.2+ (`since-build=262`) |
 | Language | Java 25, built with plain `javac` |
 | Depends on | `com.intellij.modules.platform`, `Git4Idea` |
@@ -174,7 +174,7 @@ build.gradle.kts             build script (IntelliJ Platform Gradle Plugin 2.x)
 settings.gradle.kts          project name
 gradle.properties            version, platform path, compiler settings
 gradle/wrapper/              Gradle wrapper
-src/main/java/com/caidailian/gitlabplus/
+src/main/java/com/hakil/gitlabplus/
   api/        GraphQL queries, capability probing, REST paths and client, JSON parsing
   git/        repository and remote resolution, branch listing and pushing,
               post-merge actions, process execution wrapper

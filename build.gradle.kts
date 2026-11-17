@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.20.1"
 }
 
-group = "com.caidailian"
+group = "com.hakil"
 version = providers.gradleProperty("pluginVersion").get()
 
 repositories {
@@ -39,7 +39,7 @@ java {
 
 intellijPlatform {
     pluginConfiguration {
-        id = "com.caidailian.gitlabplus"
+        id = "com.hakil.gitlabplus"
         name = "GitLab+ Merge Tool"
         version = project.version.toString()
         ideaVersion {
@@ -50,6 +50,13 @@ intellijPlatform {
     // 不使用搜索索引与 @NotNull 断言插桩
     buildSearchableOptions = false
     instrumentCode = false
+
+    // 发布到 JetBrains Marketplace：token 从 gradle 属性读取
+    // 用法：gradlew publishPlugin -PintellijPlatformPublishingToken=...
+    //     或环境变量 ORG_GRADLE_PROJECT_intellijPlatformPublishingToken
+    publishing {
+        token = providers.gradleProperty("intellijPlatformPublishingToken")
+    }
 }
 
 tasks {

@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.JobLogStyle;
+import com.hakil.gitlabplus.model.JobLogStyle;
 
 /**
  * Job 日志着色分类自测。

@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.JobLog;
+import com.hakil.gitlabplus.model.JobLog;
 
 /**
  * Job 日志尾部截断自测。

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <idea-plugin>
-  <id>com.caidailian.gitlabplus</id>
+  <id>com.hakil.gitlabplus</id>
   <name>GitLab+ Merge Tool</name>
   <version>0.2.0</version>
-  <vendor>caidailian</vendor>
+  <vendor url="https://github.com/hakil/GitLabPlus" email="hakil@vip.qq.com">caidailian</vendor>
 
   <change-notes><![CDATA[
     <h3>0.2.0</h3>
@@ -36,6 +36,7 @@
       <li><b>合并后</b>：自动 fetch --all --prune，可选自动切到目标分支、删除已合并的本地源分支</li>
     </ul>
     <p>认证：单服务器 Personal Access Token（scope 需包含 api）；可从内置 GitLab 插件已保存的 token 导入。</p>
+    <p>源码与问题反馈：<a href="https://github.com/hakil/GitLabPlus">https://github.com/hakil/GitLabPlus</a></p>
   ]]></description>
 
   <idea-version since-build="262" />
@@ -46,18 +47,18 @@
   <extensions defaultExtensionNs="com.intellij">
     <notificationGroup id="GitLabPlus.Notifications" displayType="BALLOON" />
 
-    <applicationService serviceImplementation="com.caidailian.gitlabplus.settings.GitLabPlusSettings" />
-    <applicationService serviceImplementation="com.caidailian.gitlabplus.i18n.LanguageService" />
+    <applicationService serviceImplementation="com.hakil.gitlabplus.settings.GitLabPlusSettings" />
+    <applicationService serviceImplementation="com.hakil.gitlabplus.i18n.LanguageService" />
 
     <applicationConfigurable
-        id="com.caidailian.gitlabplus.settings.GitLabPlusConfigurable"
+        id="com.hakil.gitlabplus.settings.GitLabPlusConfigurable"
         displayName="GitLab+ Merge Tool"
-        instance="com.caidailian.gitlabplus.settings.GitLabPlusConfigurable" />
+        instance="com.hakil.gitlabplus.settings.GitLabPlusConfigurable" />
 
     <toolWindow
         id="GitLab+"
         anchor="right"
         icon="AllIcons.Vcs.Branch"
-        factoryClass="com.caidailian.gitlabplus.ui.GitLabToolWindowFactory" />
+        factoryClass="com.hakil.gitlabplus.ui.GitLabToolWindowFactory" />
   </extensions>
 </idea-plugin>

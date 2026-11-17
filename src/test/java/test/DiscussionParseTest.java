@@ -1,9 +1,9 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.api.RestPaths;
+import com.hakil.gitlabplus.api.RestPaths;
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.Discussion;
+import com.hakil.gitlabplus.model.Discussion;
 import org.junit.jupiter.api.Test;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;

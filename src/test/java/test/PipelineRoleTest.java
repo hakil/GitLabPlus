@@ -1,9 +1,9 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.PipelineInfo;
+import com.hakil.gitlabplus.model.PipelineInfo;
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.PipelineRole;
+import com.hakil.gitlabplus.model.PipelineRole;
 
 /**
  * 流水线角色判定自测。

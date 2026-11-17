@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.TemplateRenderer;
+import com.hakil.gitlabplus.model.TemplateRenderer;
 
 import org.junit.jupiter.api.Test;
 import java.util.LinkedHashMap;

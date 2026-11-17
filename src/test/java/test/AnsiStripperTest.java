@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.AnsiStripper;
+import com.hakil.gitlabplus.model.AnsiStripper;
 
 /**
  * ANSI 清理自测（job 日志出现方块字符的根因）。

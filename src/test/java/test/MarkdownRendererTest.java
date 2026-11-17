@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.MarkdownRenderer;
+import com.hakil.gitlabplus.model.MarkdownRenderer;
 
 /**
  * Markdown → HTML 渲染自测（MR 描述展示）。

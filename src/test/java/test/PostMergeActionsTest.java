@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.git.PostMergeActions;
+import com.hakil.gitlabplus.git.PostMergeActions;
 
 import org.junit.jupiter.api.Test;
 import java.io.File;

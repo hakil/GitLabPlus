@@ -1,13 +1,13 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.ChangesPage;
+import com.hakil.gitlabplus.model.ChangesPage;
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.DiffParser;
+import com.hakil.gitlabplus.model.DiffParser;
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.model.SuggestionBuilder;
+import com.hakil.gitlabplus.model.SuggestionBuilder;
 import org.junit.jupiter.api.Test;
-import com.caidailian.gitlabplus.service.GitLabDiffService;
+import com.hakil.gitlabplus.service.GitLabDiffService;
 import org.junit.jupiter.api.Test;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
