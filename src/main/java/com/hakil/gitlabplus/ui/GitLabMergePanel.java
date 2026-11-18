@@ -288,11 +288,25 @@ public final class GitLabMergePanel implements com.intellij.openapi.Disposable {
     }
     String source = BranchLister.currentBranch(project, path);
     if (source == null) {
-      Messages.showWarningDialog(project, "当前项目不在任何 Git 分支上，无法创建 merge request。", "GitLab+ 新建 MR");
+      Messages.showWarningDialog(project,
+                                 "未找到与项目 " + path + " 匹配的本地 Git 仓库，无法创建 merge request。\n\n"
+                                     + "可能原因：\n"
+                                     + "  1) 该项目的 remote 未配置在本机任何仓库中；\n"
+                                     + "  2) 工程内有多个仓库，但没有任何一个的 remote 指向 " + path + "。\n\n"
+                                     + "请检查设置里的「项目全路径」，或在 IDEA 中打开对应的仓库。",
+                                 "GitLab+ 新建 MR");
+      return;
+    }
+    java.io.File workDir = BranchLister.workDirFor(project, path);
+    if (workDir == null) {
+      Messages.showWarningDialog(project,
+                                 "无法确定与项目 " + path + " 对应的本地仓库，已停止。\n\n"
+                                     + "工程内有多个 Git 仓库且都无法匹配该项目路径，猜测会推错仓库"
+                                     + "（报错形如 src refspec ... does not match any）。",
+                                 "GitLab+ 新建 MR");
       return;
     }
     BranchLister.Branches branches = BranchLister.forProject(project, path);
-    java.io.File workDir = BranchLister.workDirFor(project, path);
     java.util.Map<String, String> variables = new java.util.LinkedHashMap<>();
     variables.put("source", source);
     variables.put("target", lastTargetBranch());
@@ -315,18 +329,23 @@ public final class GitLabMergePanel implements com.intellij.openapi.Disposable {
     }
     String target = dialog.targetBranch();
     String sourceBranch = dialog.sourceBranch();
+    if (!branches.isLocal(sourceBranch) && !branches.isRemote(sourceBranch)) {
+      Messages.showWarningDialog(project,
+                                 "分支 " + sourceBranch + " 在本地与远程都不存在，请重新选择源分支。",
+                                 "GitLab+ 新建 MR");
+      return;
+    }
     PropertiesComponent.getInstance().setValue(KEY_TARGET_BRANCH, target);
-    // 是否要推送：不能只看远程有无同名分支 —— 远程有旧分支但本地有新提交时也必须 push，
-    // 否则创建出的 MR 不含任何变更（已实测的缺陷）。
-    boolean needsPush = workDir == null
-        ? branches.needsPush(sourceBranch)
-        : BranchPusher.aheadCount(workDir, sourceBranch) != 0;
+    // 是否要推送：仅本地分支才可能推送。
+    // 仅远程分支（本地无该 ref）直接创建 MR；对它 push 会报 src refspec ... does not match any。
+    // 且必须用与分支列表同源的 workDir，否则会推到别的仓库。
+    boolean needsPush = BranchLister.needsPush(branches, workDir, sourceBranch);
     setBusy(true, needsPush ? "推送 " + sourceBranch + "…" : "创建 merge request…");
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       try {
         // 本地分支未推送时先推送：拒绝（远程有新提交）则停下，要求先 Pull 解决冲突
         if (needsPush) {
-          BranchPusher.Result push = BranchPusher.push(project, sourceBranch);
+          BranchPusher.Result push = BranchPusher.push(workDir, sourceBranch);
           if (!push.pushed()) {
             String advice = BranchPusher.advice(push, sourceBranch);
             UIUtil.invokeLaterIfNeeded(() -> {

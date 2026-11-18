@@ -1,12 +1,6 @@
 package com.hakil.gitlabplus.git;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import git4idea.repo.GitRepository;
-import git4idea.repo.GitRepositoryManager;
-
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -54,24 +48,42 @@ public final class BranchPusher {
     }
   }
 
-  /** 推送项目内第一个仓库的指定分支到 origin。 */
-  public static Result push(Project project, String branch) {
-    for (GitRepository repository : GitRepositoryManager.getInstance(project).getRepositories()) {
-      VirtualFile root = repository.getRoot();
-      if (root == null) {
-        continue;
-      }
-      return push(new File(root.getPath()), branch);
+  /**
+   * 推送分支时使用的远程名：优先 {@code origin}，否则取第一个远程，均无则回退 {@code origin}。
+   *
+   * <p>写死 {@code origin} 在远程名不同的仓库会直接失败，因此先探测。</p>
+   */
+  public static String remoteName(File workDir) {
+    if (workDir == null) {
+      return "origin";
     }
-    return new Result(false, false, "项目内没有可用的 Git 仓库");
+    GitProcess.Result run = GitProcess.run(workDir, 30, "remote");
+    if (!run.ok()) {
+      return "origin";
+    }
+    List<String> names = new java.util.ArrayList<>();
+    for (String line : run.stdout().split("\n")) {
+      String name = line.trim();
+      if (!name.isEmpty()) {
+        names.add(name);
+      }
+    }
+    if (names.contains("origin")) {
+      return "origin";
+    }
+    return names.isEmpty() ? "origin" : names.get(0);
   }
 
   public static Result push(File workDir, String branch) {
+    if (workDir == null) {
+      return new Result(false, false, "未找到可用的本地 Git 仓库");
+    }
     if (branch == null || branch.isBlank()) {
       return new Result(false, false, "分支名为空");
     }
+    String remote = remoteName(workDir);
     GitProcess.Result run = GitProcess.run(workDir, GitProcess.NETWORK_TIMEOUT_SECONDS,
-                                          "push", "-u", "origin", branch);
+                                          "push", "-u", remote, branch);
     if (run.timedOut()) {
       return new Result(false, false,
                         "推送超时（" + GitProcess.NETWORK_TIMEOUT_SECONDS + " 秒），请检查网络或凭据配置");
@@ -84,7 +96,8 @@ public final class BranchPusher {
         || combined.contains("non-fast-forward")
         || combined.contains("fetch first")
         || combined.contains("Updates were rejected");
-    return new Result(false, rejected, abbreviate(combined));
+    return new Result(false, rejected,
+                      "仓库 " + workDir.getPath() + " · 远程 " + remote + "\n" + abbreviate(combined));
   }
 
   /** 给用户的下一步建议（rejected 时说明必须先拉取）。 */

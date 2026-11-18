@@ -85,104 +85,85 @@ public final class BranchLister {
   /**
    * 取<b>与当前 GitLab 项目对应</b>的仓库的分支。
    *
-   * <p>匹配规则：仓库 remote 解析出的项目路径与 {@code gitLabProjectPath} 相等；
-   * 没有匹配时退回第一个有分支的仓库（单仓库工程即正常情况）。</p>
+   * <p>仓库选择统一走 {@link #workDirFor}，保证分支列表与后续 git 命令同源。</p>
    */
   public static Branches forProject(Project project, String gitLabProjectPath) {
-    List<GitRepository> repositories = GitRepositoryManager.getInstance(project).getRepositories();
-    if (gitLabProjectPath != null && !gitLabProjectPath.isBlank()) {
-      for (GitRepository repository : repositories) {
-        if (matchesProject(repository, gitLabProjectPath)) {
-          Branches branches = branchesOf(repository);
-          if (!branches.isEmpty()) {
-            return branches;
-          }
-        }
-      }
-    }
-    return forProject(project);
+    File workDir = workDirFor(project, gitLabProjectPath);
+    return workDir == null ? new Branches(List.of(), List.of()) : list(workDir);
   }
 
-  private static boolean matchesProject(GitRepository repository, String gitLabProjectPath) {
-    for (String url : GitProjectResolver.readRemoteUrls(repository)) {
-      GitProjectResolver.Resolved resolved = GitProjectResolver.parseRemoteUrl(url);
-      if (resolved != null && resolved.projectPath().equalsIgnoreCase(gitLabProjectPath.trim())) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /** 与当前 GitLab 项目匹配的仓库的当前分支（无匹配则取第一个仓库）。 */
+  /** 与当前 GitLab 项目匹配的仓库的当前分支；无匹配时为 {@code null}。 */
   public static String currentBranch(Project project, String gitLabProjectPath) {
-    List<GitRepository> repositories = GitRepositoryManager.getInstance(project).getRepositories();
-    if (gitLabProjectPath != null && !gitLabProjectPath.isBlank()) {
-      for (GitRepository repository : repositories) {
-        if (matchesProject(repository, gitLabProjectPath)) {
-          VirtualFile root = repository.getRoot();
-          if (root != null) {
-            return PostMergeActions.currentBranch(new File(root.getPath()));
-          }
-        }
-      }
-    }
-    for (GitRepository repository : repositories) {
-      VirtualFile root = repository.getRoot();
-      if (root != null) {
-        String branch = PostMergeActions.currentBranch(new File(root.getPath()));
-        if (branch != null && !branch.isBlank()) {
-          return branch;
-        }
-      }
-    }
-    return null;
+    File workDir = workDirFor(project, gitLabProjectPath);
+    return workDir == null ? null : PostMergeActions.currentBranch(workDir);
   }
 
   /**
-   * 取与指定 GitLab 项目匹配的仓库工作目录（用于执行 git 命令）。
+   * 仓库候选：工作目录 + 各 remote 地址。
    *
-   * <p>必须与分支列表来源一致：推错仓库会推送一个不含变更的分支，
-   * 导致创建出的 MR 没有 diff。</p>
+   * <p>独立于 IDEA 的 {@code GitRepository} 以便对选择规则做离线测试。</p>
    */
-  public static File workDirFor(Project project, String gitLabProjectPath) {
-    List<GitRepository> repositories = GitRepositoryManager.getInstance(project).getRepositories();
+  public record Candidate(File workDir, List<String> remoteUrls) {
+  }
+
+  /**
+   * 从候选中选出与 GitLab 项目匹配的工作目录。
+   *
+   * <p>规则：有匹配取匹配项；无匹配但只有一个候选（单仓库工程）取它；
+   * <b>多候选且无匹配返回 {@code null}</b>——不猜测，否则会把分支推送到另一个仓库，
+   * 报错形如 {@code src refspec <branch> does not match any}。</p>
+   */
+  public static File pick(List<Candidate> candidates, String gitLabProjectPath) {
+    if (candidates == null || candidates.isEmpty()) {
+      return null;
+    }
     if (gitLabProjectPath != null && !gitLabProjectPath.isBlank()) {
-      for (GitRepository repository : repositories) {
-        if (matchesProject(repository, gitLabProjectPath)) {
-          VirtualFile root = repository.getRoot();
-          if (root != null) {
-            return new File(root.getPath());
+      String wanted = gitLabProjectPath.trim();
+      for (Candidate candidate : candidates) {
+        if (candidate.remoteUrls() == null) {
+          continue;
+        }
+        for (String url : candidate.remoteUrls()) {
+          GitProjectResolver.Resolved resolved = GitProjectResolver.parseRemoteUrl(url);
+          if (resolved != null && resolved.projectPath().equalsIgnoreCase(wanted)) {
+            return candidate.workDir();
           }
         }
       }
     }
-    for (GitRepository repository : repositories) {
-      VirtualFile root = repository.getRoot();
-      if (root != null) {
-        return new File(root.getPath());
-      }
-    }
-    return null;
+    return candidates.size() == 1 ? candidates.get(0).workDir() : null;
   }
 
-  private static Branches branchesOf(GitRepository repository) {
-    VirtualFile root = repository.getRoot();
-    return root == null ? new Branches(List.of(), List.of()) : list(new File(root.getPath()));
-  }
-
-  /** 取项目内第一个有分支的仓库。 */
-  public static Branches forProject(Project project) {
+  /**
+   * 取与指定 GitLab 项目匹配的工作目录（用于执行 git 命令）。
+   *
+   * @return 无可用或无法唯一确定时为 {@code null}，由调用方明确提示，不静默回退
+   */
+  public static File workDirFor(Project project, String gitLabProjectPath) {
+    List<Candidate> candidates = new ArrayList<>();
     for (GitRepository repository : GitRepositoryManager.getInstance(project).getRepositories()) {
       VirtualFile root = repository.getRoot();
-      if (root == null) {
-        continue;
-      }
-      Branches branches = list(new File(root.getPath()));
-      if (!branches.isEmpty()) {
-        return branches;
+      if (root != null) {
+        candidates.add(new Candidate(new File(root.getPath()), GitProjectResolver.readRemoteUrls(repository)));
       }
     }
-    return new Branches(List.of(), List.of());
+    return pick(candidates, gitLabProjectPath);
+  }
+
+  /**
+   * 创建 MR 前是否需要推送。
+   *
+   * <p>仅<b>本地</b>分支才可能推送；仅远程存在的分支直接创建 MR——
+   * 本地没有该 ref，对它执行 push 会报 {@code src refspec <branch> does not match any}。</p>
+   */
+  public static boolean needsPush(Branches branches, File workDir, String branch) {
+    if (branches == null || workDir == null || branch == null || branch.isBlank()) {
+      return false;
+    }
+    if (!branches.isLocal(branch)) {
+      return false;
+    }
+    return BranchPusher.aheadCount(workDir, branch) != 0;
   }
 
   public static Branches list(File workDir) {
