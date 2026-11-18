@@ -3,13 +3,9 @@ package test;
 import org.junit.jupiter.api.Test;
 import com.hakil.gitlabplus.git.BranchLister;
 
-import org.junit.jupiter.api.Test;
 import java.io.File;
-import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
-import org.junit.jupiter.api.Test;
 import java.nio.file.Path;
-import org.junit.jupiter.api.Test;
 import java.util.List;
 
 /**

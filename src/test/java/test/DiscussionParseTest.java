@@ -2,11 +2,8 @@ package test;
 
 import org.junit.jupiter.api.Test;
 import com.hakil.gitlabplus.api.RestPaths;
-import org.junit.jupiter.api.Test;
 import com.hakil.gitlabplus.model.Discussion;
-import org.junit.jupiter.api.Test;
 import com.google.gson.JsonObject;
-import org.junit.jupiter.api.Test;
 import com.google.gson.JsonParser;
 
 /**

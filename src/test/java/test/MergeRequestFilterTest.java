@@ -2,14 +2,10 @@ package test;
 
 import org.junit.jupiter.api.Test;
 import com.hakil.gitlabplus.model.MergeRequestFilter;
-import org.junit.jupiter.api.Test;
 import com.hakil.gitlabplus.model.MergeRequestInfo;
-import org.junit.jupiter.api.Test;
 import com.google.gson.JsonObject;
-import org.junit.jupiter.api.Test;
 import com.google.gson.JsonParser;
 
-import org.junit.jupiter.api.Test;
 import java.util.List;
 
 /**

@@ -3,7 +3,6 @@ package test;
 import org.junit.jupiter.api.Test;
 import com.hakil.gitlabplus.model.ProjectSelection;
 
-import org.junit.jupiter.api.Test;
 import java.util.List;
 
 /**

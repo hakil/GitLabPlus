@@ -3,9 +3,7 @@ package test;
 import org.junit.jupiter.api.Test;
 import com.hakil.gitlabplus.model.TemplateRenderer;
 
-import org.junit.jupiter.api.Test;
 import java.util.LinkedHashMap;
-import org.junit.jupiter.api.Test;
 import java.util.Map;
 
 /**

@@ -3,7 +3,6 @@ package test;
 import org.junit.jupiter.api.Test;
 import com.hakil.gitlabplus.model.BranchOrdering;
 
-import org.junit.jupiter.api.Test;
 import java.util.List;
 
 /**

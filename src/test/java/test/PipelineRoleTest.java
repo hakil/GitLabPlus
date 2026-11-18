@@ -2,7 +2,6 @@ package test;
 
 import org.junit.jupiter.api.Test;
 import com.hakil.gitlabplus.model.PipelineInfo;
-import org.junit.jupiter.api.Test;
 import com.hakil.gitlabplus.model.PipelineRole;
 
 /**

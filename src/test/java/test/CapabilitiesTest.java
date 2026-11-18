@@ -3,9 +3,7 @@ package test;
 import org.junit.jupiter.api.Test;
 import com.hakil.gitlabplus.api.MergeRequestCapabilities;
 
-import org.junit.jupiter.api.Test;
 import java.util.LinkedHashSet;
-import org.junit.jupiter.api.Test;
 import java.util.Set;
 
 /**

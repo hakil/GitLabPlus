@@ -2,12 +2,9 @@ package test;
 
 import org.junit.jupiter.api.Test;
 import com.hakil.gitlabplus.model.DiffParser;
-import org.junit.jupiter.api.Test;
 import com.google.gson.JsonArray;
-import org.junit.jupiter.api.Test;
 import com.google.gson.JsonParser;
 
-import org.junit.jupiter.api.Test;
 import java.util.List;
 
 /**
