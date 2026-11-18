@@ -8,7 +8,6 @@ import com.hakil.gitlabplus.model.TemplateRenderer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.JCheckBox;
@@ -131,16 +130,20 @@ public final class CreateMergeRequestDialog extends DialogWrapper {
     }
   }
 
+  /**
+   * 列宽由 {@link CreateMergeRequestForm} 统一拉伸，这里只给下拉一个初始宽度。
+   *
+   * <p>不为标题框设 {@code setPreferredSize}：文本组件的宽度由列数决定，显式尺寸不生效，
+   * 反而会让它比下拉窄一截。</p>
+   */
   private void fillBranches(BranchLister.Branches branches,
                             String currentBranch,
                             String defaultTarget) {
     sourceCombo.setEditable(true);
     targetCombo.setEditable(true);
-    // 两个下拉与文本字段统一宽度：否则 FormBuilder 按最宽控件排版，标题框会显得被“挤窄”
     int fieldWidth = 560;
     sourceCombo.setPreferredSize(new Dimension(fieldWidth, sourceCombo.getPreferredSize().height));
     targetCombo.setPreferredSize(new Dimension(fieldWidth, targetCombo.getPreferredSize().height));
-    titleField.setPreferredSize(new Dimension(fieldWidth, titleField.getPreferredSize().height));
     sourceCombo.setMinimumSize(new Dimension(320, sourceCombo.getPreferredSize().height));
     targetCombo.setMinimumSize(new Dimension(320, targetCombo.getPreferredSize().height));
 
@@ -240,17 +243,17 @@ public final class CreateMergeRequestDialog extends DialogWrapper {
 
   @Override
   protected @Nullable JComponent createCenterPanel() {
-    JPanel panel = FormBuilder.createFormBuilder()
-        .addLabeledComponent(new JLabel(GitLabPlusBundle.message("create.source") + "："), sourceCombo, 1, false)
-        .addLabeledComponent(new JLabel(GitLabPlusBundle.message("create.target") + "："), targetCombo, 1, false)
-        .addComponent(hintLabel, 1)
-        .addLabeledComponent(new JLabel(GitLabPlusBundle.message("create.titleField") + "："), titleField, 1, false)
-        .addLabeledComponent(new JLabel(GitLabPlusBundle.message("create.descriptionField") + "："),
-                              new JScrollPane(descriptionArea), 1, false)
-        .addComponent(removeSourceCheck, 1)
-        .addComponent(squashCheck, 1)
-        .getPanel();
-    panel.setPreferredSize(new Dimension(720, 420));
+    JPanel panel = CreateMergeRequestForm.build(List.of(
+        new CreateMergeRequestForm.Row(GitLabPlusBundle.message("create.source") + "：", sourceCombo, false),
+        new CreateMergeRequestForm.Row(GitLabPlusBundle.message("create.target") + "：", targetCombo, false),
+        new CreateMergeRequestForm.Row(null, hintLabel, true),
+        new CreateMergeRequestForm.Row(GitLabPlusBundle.message("create.titleField") + "：", titleField, false),
+        new CreateMergeRequestForm.Row(GitLabPlusBundle.message("create.descriptionField") + "：",
+                                       new JScrollPane(descriptionArea), false),
+        new CreateMergeRequestForm.Row(null, removeSourceCheck, true),
+        new CreateMergeRequestForm.Row(null, squashCheck, true)));
+    panel.setMinimumSize(CreateMergeRequestForm.minimumSize());
+    panel.setPreferredSize(new Dimension(760, 460));
     return panel;
   }
 
