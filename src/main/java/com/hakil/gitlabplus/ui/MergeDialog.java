@@ -1,6 +1,7 @@
 package com.hakil.gitlabplus.ui;
 
 import com.hakil.gitlabplus.i18n.GitLabPlusBundle;
+import com.hakil.gitlabplus.model.MergeCommitMessages;
 import com.hakil.gitlabplus.model.MergeRequestDetails;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -23,7 +24,7 @@ import java.awt.Dimension;
 public final class MergeDialog extends DialogWrapper {
 
   private final MergeRequestDetails details;
-  private final boolean squash;
+  private final boolean forceSquash;
   private final JTextArea commitMessageArea = new JTextArea(4, 60);
   private final JCheckBox deleteSourceCheck =
       new JCheckBox(GitLabPlusBundle.message("merge.removeSource"));
@@ -35,10 +36,12 @@ public final class MergeDialog extends DialogWrapper {
   public MergeDialog(Project project, MergeRequestDetails details, boolean forceSquash) {
     super(project, true);
     this.details = details;
-    this.squash = forceSquash;
-    commitMessageArea.setText(forceSquash
-                                  ? safe(details.defaultSquashCommitMessage, details.title)
-                                  : safe(details.defaultMergeCommitMessage, details.title));
+    this.forceSquash = forceSquash;
+    boolean squashByDefault = MergeCommitMessages.defaultSquash(forceSquash, details.squashOnMerge);
+    commitMessageArea.setText(MergeCommitMessages.initial(squashByDefault,
+                                                         details.defaultSquashCommitMessage,
+                                                         details.defaultMergeCommitMessage,
+                                                         details.title));
     commitMessageArea.setLineWrap(true);
     commitMessageArea.setWrapStyleWord(true);
     deleteSourceCheck.setSelected(details.shouldRemoveSourceBranch);
@@ -49,11 +52,9 @@ public final class MergeDialog extends DialogWrapper {
     else {
       deleteSourceCheck.setText(GitLabPlusBundle.message("merge.removeSourceWithBranch", details.sourceBranch));
     }
-    squashCheck.setSelected(true);
-    squashCheck.setEnabled(!forceSquash || details.squashReadOnly);
-    if (forceSquash) {
-      squashCheck.setSelected(true);
-    }
+    // 初始状态跟随 MR 自身的 squash 设置，不硬编码勾选
+    squashCheck.setSelected(squashByDefault);
+    squashCheck.setEnabled(MergeCommitMessages.squashEditable(forceSquash, details.squashReadOnly));
     setTitle(forceSquash
                  ? GitLabPlusBundle.message("merge.titleSquash", details.iid)
                  : GitLabPlusBundle.message("merge.titleMerge", details.iid));
@@ -74,7 +75,7 @@ public final class MergeDialog extends DialogWrapper {
 
     JPanel options = new JPanel();
     options.setLayout(new BoxLayout(options, BoxLayout.Y_AXIS));
-    if (!squash) {
+    if (!forceSquash) {
       options.add(squashCheck);
     }
     options.add(deleteSourceCheck);
@@ -97,19 +98,16 @@ public final class MergeDialog extends DialogWrapper {
     return text == null ? "" : text.trim();
   }
 
+  /** squash 时返回压缩提交信息，否则返回 {@code null}（不发送，避免同一标题写两次）。 */
   public String squashCommitMessage() {
-    return squash ? commitMessage() : "";
+    return MergeCommitMessages.squash(squash(), commitMessage());
   }
 
   public boolean squash() {
-    return squash || squashCheck.isSelected();
+    return forceSquash || squashCheck.isSelected();
   }
 
   public boolean deleteSourceBranch() {
     return deleteSourceCheck.isSelected();
-  }
-
-  private static String safe(String value, String fallback) {
-    return value == null || value.isBlank() ? fallback : value;
   }
 }

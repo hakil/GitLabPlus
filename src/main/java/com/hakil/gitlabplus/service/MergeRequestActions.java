@@ -5,6 +5,7 @@ import com.hakil.gitlabplus.api.GraphQLQueries;
 import com.hakil.gitlabplus.api.JsonSupport;
 import com.hakil.gitlabplus.api.RestPaths;
 import com.hakil.gitlabplus.i18n.GitLabPlusBundle;
+import com.hakil.gitlabplus.model.MergeCommitMessages;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
@@ -47,8 +48,9 @@ public final class MergeRequestActions {
     variables.addProperty("sha", sha);
     variables.addProperty("withSquash", squash);
     variables.addProperty("shouldRemoveSourceBranch", removeSourceBranch);
-    addNullable(variables, "commitMessage", commitMessage);
-    addNullable(variables, "squashCommitMessage", squash ? squashCommitMessage : null);
+    // 合并与压缩合并的提交信息互斥发送：同时发送会让同一标题在提交里出现两次
+    addNullable(variables, "commitMessage", MergeCommitMessages.merge(squash, commitMessage));
+    addNullable(variables, "squashCommitMessage", MergeCommitMessages.squash(squash, squashCommitMessage));
 
     JsonObject data = client.execute(GraphQLQueries.MERGE_REQUEST_ACCEPT, variables);
     JsonObject payload = JsonSupport.obj(data, "mergeRequestAccept");
