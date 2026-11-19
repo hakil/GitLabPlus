@@ -3,6 +3,7 @@ package test;
 import com.hakil.gitlabplus.ui.CreateMergeRequestForm;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -52,6 +53,28 @@ class CreateMergeRequestFormTest extends SuiteTestSupport {
     TestAssert.isTrue("组件为 null 的行被跳过",
                       CreateMergeRequestForm.build(
                           List.of(new CreateMergeRequestForm.Row("标题：", null, false))) != null);
+  }
+
+  @Test
+  void descriptionAbsorbsSpareHeight() {
+    JComboBox<String> combo = new JComboBox<>(new String[]{"feature/login"});
+    JTextField title = new JTextField(32);
+    JTextArea description = new JTextArea(4, 20);
+    JScrollPane descriptionScroll = new JScrollPane(description);
+    JCheckBox squash = new JCheckBox("压缩提交");
+    JPanel panel = CreateMergeRequestForm.build(List.of(
+        new CreateMergeRequestForm.Row("源分支：", combo, false),
+        new CreateMergeRequestForm.Row("标题：", title, false),
+        new CreateMergeRequestForm.Row("描述：", descriptionScroll, false, true),
+        new CreateMergeRequestForm.Row(null, squash, true)));
+
+    panel.setSize(760, 460);
+    layoutDeep(panel);
+
+    TestAssert.isTrue("描述区吸收多余高度（> 150px）", descriptionScroll.getHeight() > 150);
+    int checkBottom = squash.getY() + squash.getHeight();
+    TestAssert.isTrue("勾选框下方无大片留白（间隙 < 40px）",
+                      panel.getHeight() - checkBottom < 40);
   }
 
   private static void layoutDeep(Container container) {

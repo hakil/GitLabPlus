@@ -249,7 +249,7 @@ public final class CreateMergeRequestDialog extends DialogWrapper {
         new CreateMergeRequestForm.Row(null, hintLabel, true),
         new CreateMergeRequestForm.Row(GitLabPlusBundle.message("create.titleField") + "：", titleField, false),
         new CreateMergeRequestForm.Row(GitLabPlusBundle.message("create.descriptionField") + "：",
-                                       new JScrollPane(descriptionArea), false),
+                                       new JScrollPane(descriptionArea), false, true),
         new CreateMergeRequestForm.Row(null, removeSourceCheck, true),
         new CreateMergeRequestForm.Row(null, squashCheck, true)));
     panel.setMinimumSize(CreateMergeRequestForm.minimumSize());

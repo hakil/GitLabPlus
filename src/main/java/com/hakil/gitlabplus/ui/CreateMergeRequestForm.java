@@ -21,8 +21,15 @@ import java.util.List;
  */
 public final class CreateMergeRequestForm {
 
-  /** 一行控件；{@code fullWidth} 表示该行控件横跨 label 列与控件列（提示文字、勾选框）。 */
-  public record Row(String label, JComponent component, boolean fullWidth) {
+  /**
+   * 一行控件；{@code fullWidth} 表示横跨 label 列与控件列（提示文字、勾选框），
+   * {@code expandVertically} 表示吸收多余高度（描述框）。
+   */
+  public record Row(String label, JComponent component, boolean fullWidth, boolean expandVertically) {
+
+    public Row(String label, JComponent component, boolean fullWidth) {
+      this(label, component, fullWidth, false);
+    }
   }
 
   private CreateMergeRequestForm() {
@@ -60,21 +67,39 @@ public final class CreateMergeRequestForm {
         panel.add(row.component(), cell);
       }
       else {
+        GridBagConstraints cell = new GridBagConstraints();
+        cell.gridx = 1;
+        cell.gridy = fieldCell.gridy;
+        cell.weightx = 1;
+        cell.anchor = GridBagConstraints.WEST;
+        cell.insets = new Insets(4, 0, 4, 0);
+        if (row.expandVertically()) {
+          // 吸收多余高度，避免控件挤在顶部、下方留出大片空白
+          cell.weighty = 1;
+          cell.fill = GridBagConstraints.BOTH;
+        }
+        else {
+          cell.fill = GridBagConstraints.HORIZONTAL;
+        }
         panel.add(new JLabel(row.label()), labelCell);
-        panel.add(row.component(), fieldCell);
+        panel.add(row.component(), cell);
       }
       labelCell.gridy++;
       fieldCell.gridy++;
     }
 
-    // 把多余高度留在底部，避免控件被纵向拉伸
-    GridBagConstraints filler = new GridBagConstraints();
-    filler.gridx = 0;
-    filler.gridy = labelCell.gridy;
-    filler.gridwidth = 2;
-    filler.weighty = 1;
-    filler.fill = GridBagConstraints.BOTH;
-    panel.add(new JPanel(), filler);
+    // 没有任何组件吸收高度时，把多余空间压在底部而不是分散到各行间隙
+    boolean hasExpandingRow = rows.stream()
+        .anyMatch(row -> row.component() != null && row.expandVertically());
+    if (!hasExpandingRow) {
+      GridBagConstraints filler = new GridBagConstraints();
+      filler.gridx = 0;
+      filler.gridy = labelCell.gridy;
+      filler.gridwidth = 2;
+      filler.weighty = 1;
+      filler.fill = GridBagConstraints.BOTH;
+      panel.add(new JPanel(), filler);
+    }
     return panel;
   }
 
