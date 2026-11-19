@@ -142,11 +142,11 @@ public final class CiPanel {
 
     // 流水线表是主体（含合并前后多条），job 表辅助：给流水线更大权重与初始高度
     JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, pipelinePanel, jobPanel);
-    split.setResizeWeight(0.68);
+    split.setResizeWeight(0.5);
     split.setContinuousLayout(true);
     split.setOneTouchExpandable(true);
-    split.setDividerLocation(0.68);
-    SplitRatioKeeper.keep(split, 0.68, 32);
+    split.setDividerLocation(0.5);
+    SplitRatioKeeper.keep(split, 0.5, 32);
 
     JPanel actions = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 2));
     actions.add(playButton);

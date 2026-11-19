@@ -180,17 +180,17 @@ public final class GitLabMergePanel implements com.intellij.openapi.Disposable {
     root.add(filterRow, BorderLayout.NORTH);
     // 上下布局：列表为主（初始约 62% 高度），详情仅在选中 MR 后才浮现
     mainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, listPanel, detailPanel.component());
-    mainSplit.setResizeWeight(0.6);
+    mainSplit.setResizeWeight(0.4);
     mainSplit.setContinuousLayout(true);
     mainSplit.setOneTouchExpandable(true);
     detailPanel.component().setMinimumSize(new Dimension(200, 70));
     javax.swing.SwingUtilities.invokeLater(() -> {
       if (mainSplit != null) {
-        mainSplit.setDividerLocation(0.6);
+        mainSplit.setDividerLocation(0.4);
       }
     });
     // 工具窗口被压矮（如在底部打开 Git 面板）时，按比例纠正分隔位，避免详情区被挤成 0
-    SplitRatioKeeper.keep(mainSplit, 0.6, 32, () -> detailPanel.component().isVisible());
+    SplitRatioKeeper.keep(mainSplit, 0.4, 32, () -> detailPanel.component().isVisible());
     root.add(mainSplit, BorderLayout.CENTER);
     showDetail(false);
     // 不设 preferredSize：否则工具窗口无法缩窄；只给合理的最小尺寸
@@ -396,8 +396,8 @@ public final class GitLabMergePanel implements com.intellij.openapi.Disposable {
     }
     detail.setVisible(show);
     if (mainSplit != null) {
-      mainSplit.setResizeWeight(show ? 0.6 : 1.0);
-      mainSplit.setDividerLocation(show ? 0.6 : 1.0);
+      mainSplit.setResizeWeight(show ? 0.4 : 1.0);
+      mainSplit.setDividerLocation(show ? 0.4 : 1.0);
     }
   }
 
