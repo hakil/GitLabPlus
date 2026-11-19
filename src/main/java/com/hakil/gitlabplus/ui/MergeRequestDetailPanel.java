@@ -1,6 +1,7 @@
 package com.hakil.gitlabplus.ui;
 
 import com.hakil.gitlabplus.api.GitLabClient;
+import com.hakil.gitlabplus.git.BranchLister;
 import com.hakil.gitlabplus.git.GitRefresher;
 import com.hakil.gitlabplus.git.PostMergeActions;
 import com.hakil.gitlabplus.model.MarkdownRenderer;
@@ -327,7 +328,8 @@ public final class MergeRequestDetailPanel {
         service.accept(path, details.iid, headSha, commitMessage, squashMessage, useSquash, deleteSource);
         String state = service.awaitMerged(path, details.iid);
         boolean merged = "MERGED".equalsIgnoreCase(state);
-        GitRefresher.Result fetch = GitRefresher.fetchAll(project);
+        java.io.File fetchDir = BranchLister.workDirFor(project, path);
+        GitRefresher.Result fetch = GitRefresher.fetchPrimaryThenOthersAsync(project, fetchDir);
         GitLabPlusSettings settings = GitLabPlusSettings.getInstance();
         PostMergeActions.Result post = PostMergeActions.apply(
             project, details.targetBranch, details.sourceBranch,
