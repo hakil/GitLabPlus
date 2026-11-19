@@ -29,9 +29,27 @@ class MergeCommitMessagesTest extends SuiteTestSupport {
   }
 
   @Test
-  void initialMessageIsEmptyToAvoidDuplicateTitle() {
-    // GitLab 会把自定义提交信息追加到自动生成的标题之后：预填 commitMessage 就会重复
-    TestAssert.eq("默认提交信息为空", "", MergeCommitMessages.initialMessage());
+  void initialMessagePrefillsGitLabDefault() {
+    TestAssert.eq("squash 预填压缩默认值", "sq",
+                  MergeCommitMessages.initialMessage(true, "sq", "merge", "title"));
+    TestAssert.eq("非 squash 预填合并默认值", "merge",
+                  MergeCommitMessages.initialMessage(false, "sq", "merge", "title"));
+    TestAssert.eq("默认值为空退到标题", "title",
+                  MergeCommitMessages.initialMessage(false, "", "", "title"));
+    TestAssert.eq("全空返回空串", "",
+                  MergeCommitMessages.initialMessage(false, null, null, null));
+  }
+
+  @Test
+  void unchangedTextIsNotSent() {
+    String baseline = "Merge branch '2.0.0' into 'dev'";
+    TestAssert.eq("未修改 → 不发送", "", MergeCommitMessages.customized(baseline, baseline));
+    TestAssert.eq("仅空白差异 → 不发送", "", MergeCommitMessages.customized("  " + baseline + "\n", baseline));
+    TestAssert.eq("修改后 → 发送修改内容", "补充说明",
+                  MergeCommitMessages.customized("补充说明", baseline));
+    TestAssert.eq("清空 → 不发送", "", MergeCommitMessages.customized("", baseline));
+    TestAssert.eq("当前为 null → 不发送", "", MergeCommitMessages.customized(null, baseline));
+    TestAssert.eq("初始为 null 且有内容 → 发送", "x", MergeCommitMessages.customized("x", null));
   }
 
   @Test

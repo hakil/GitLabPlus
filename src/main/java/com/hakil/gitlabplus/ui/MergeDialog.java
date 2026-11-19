@@ -30,6 +30,7 @@ public final class MergeDialog extends DialogWrapper {
       new JCheckBox(GitLabPlusBundle.message("merge.removeSource"));
   private final JCheckBox squashCheck = new JCheckBox(GitLabPlusBundle.message("merge.squash"));
   private final JLabel commitHintLabel = new JLabel();
+  private final String initialCommitMessage;
 
   /**
    * @param forceSquash true 表示从「Squash and Merge」进入，squash 勾选不可取消
@@ -39,13 +40,13 @@ public final class MergeDialog extends DialogWrapper {
     this.details = details;
     this.forceSquash = forceSquash;
     boolean squashByDefault = MergeCommitMessages.defaultSquash(forceSquash, details.squashOnMerge);
-    // 默认留空：GitLab 会把自定义提交信息追加到它生成的标题之后，预填同款文本就会重复
-    commitMessageArea.setText(MergeCommitMessages.initialMessage());
-    commitHintLabel.setText(GitLabPlusBundle.message("merge.commitMessageHint") + " "
-                                + MergeCommitMessages.defaultMessage(squashByDefault,
-                                                                    details.defaultSquashCommitMessage,
-                                                                    details.defaultMergeCommitMessage,
-                                                                    details.title));
+    // 按 GitLab 默认值预填，用户可改；不改则发送时不带该字段，避免标题重复
+    this.initialCommitMessage = MergeCommitMessages.initialMessage(squashByDefault,
+                                                                 details.defaultSquashCommitMessage,
+                                                                 details.defaultMergeCommitMessage,
+                                                                 details.title);
+    commitMessageArea.setText(initialCommitMessage);
+    commitHintLabel.setText(GitLabPlusBundle.message("merge.commitMessageHint"));
     commitMessageArea.setLineWrap(true);
     commitMessageArea.setWrapStyleWord(true);
     deleteSourceCheck.setSelected(details.shouldRemoveSourceBranch);
@@ -101,9 +102,11 @@ public final class MergeDialog extends DialogWrapper {
     return commitMessageArea;
   }
 
+  /**
+   * 实际要发送的提交信息：与预填值相同（未修改）时返回空串，表示不发送。
+   */
   public String commitMessage() {
-    String text = commitMessageArea.getText();
-    return text == null ? "" : text.trim();
+    return MergeCommitMessages.customized(commitMessageArea.getText(), initialCommitMessage);
   }
 
   /** squash 时返回压缩提交信息，否则返回 {@code null}（不发送，避免同一标题写两次）。 */

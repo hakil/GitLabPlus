@@ -23,14 +23,32 @@ public final class MergeCommitMessages {
   }
 
   /**
-   * 对话框初始提交信息：<b>默认留空</b>。
+   * 对话框初始提交信息：按 GitLab 默认值预填，用户可见可改。
    *
-   * <p>不能预填：GraphQL {@code mergeRequestAccept} 的 {@code commitMessage} 会被 GitLab
-   * <b>追加</b>到它自动生成的标题之后，而默认标题与 {@code defaultMergeCommitMessage} 内容相同，
-   * 预填就会得到「Merge branch 'x' into 'y'」重复两遍。</p>
+   * <p>squash 取压缩默认值，否则取合并默认值；都为空时退到 MR 标题。</p>
    */
-  public static String initialMessage() {
-    return "";
+  public static String initialMessage(boolean squash,
+                                      String defaultSquash,
+                                      String defaultMerge,
+                                      String title) {
+    String primary = squash ? defaultSquash : defaultMerge;
+    if (primary != null && !primary.isBlank()) {
+      return primary;
+    }
+    return title == null ? "" : title;
+  }
+
+  /**
+   * 用户实际修改过的提交信息。
+   *
+   * <p>与初始值相同（忽略首尾空白）时返回空串，表示<b>不发送</b>该字段：GraphQL
+   * {@code mergeRequestAccept} 的 {@code commitMessage} 会被 GitLab 追加到它自动生成的标题之后，
+   * 发送与默认标题相同的文本会让「Merge branch 'x' into 'y'」出现两遍。</p>
+   */
+  public static String customized(String current, String initial) {
+    String text = current == null ? "" : current.trim();
+    String baseline = initial == null ? "" : initial.trim();
+    return text.equals(baseline) ? "" : text;
   }
 
   /** 展示用：GitLab 在该场景会使用的默认提交标题（供对话框提示）。 */
