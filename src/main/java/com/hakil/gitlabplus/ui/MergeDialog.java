@@ -29,6 +29,7 @@ public final class MergeDialog extends DialogWrapper {
   private final JCheckBox deleteSourceCheck =
       new JCheckBox(GitLabPlusBundle.message("merge.removeSource"));
   private final JCheckBox squashCheck = new JCheckBox(GitLabPlusBundle.message("merge.squash"));
+  private final JLabel commitHintLabel = new JLabel();
 
   /**
    * @param forceSquash true 表示从「Squash and Merge」进入，squash 勾选不可取消
@@ -38,10 +39,13 @@ public final class MergeDialog extends DialogWrapper {
     this.details = details;
     this.forceSquash = forceSquash;
     boolean squashByDefault = MergeCommitMessages.defaultSquash(forceSquash, details.squashOnMerge);
-    commitMessageArea.setText(MergeCommitMessages.initial(squashByDefault,
-                                                         details.defaultSquashCommitMessage,
-                                                         details.defaultMergeCommitMessage,
-                                                         details.title));
+    // 默认留空：GitLab 会把自定义提交信息追加到它生成的标题之后，预填同款文本就会重复
+    commitMessageArea.setText(MergeCommitMessages.initialMessage());
+    commitHintLabel.setText(GitLabPlusBundle.message("merge.commitMessageHint") + " "
+                                + MergeCommitMessages.defaultMessage(squashByDefault,
+                                                                    details.defaultSquashCommitMessage,
+                                                                    details.defaultMergeCommitMessage,
+                                                                    details.title));
     commitMessageArea.setLineWrap(true);
     commitMessageArea.setWrapStyleWord(true);
     deleteSourceCheck.setSelected(details.shouldRemoveSourceBranch);
@@ -70,7 +74,11 @@ public final class MergeDialog extends DialogWrapper {
     info.add(new JLabel(GitLabPlusBundle.message("merge.label.status") + details.statusSummary()));
 
     JPanel messagePanel = new JPanel(new BorderLayout(0, 2));
-    messagePanel.add(new JLabel(GitLabPlusBundle.message("merge.commitMessage")), BorderLayout.NORTH);
+    JPanel messageHeader = new JPanel();
+    messageHeader.setLayout(new BoxLayout(messageHeader, BoxLayout.Y_AXIS));
+    messageHeader.add(new JLabel(GitLabPlusBundle.message("merge.commitMessage")));
+    messageHeader.add(commitHintLabel);
+    messagePanel.add(messageHeader, BorderLayout.NORTH);
     messagePanel.add(new JBScrollPane(commitMessageArea), BorderLayout.CENTER);
 
     JPanel options = new JPanel();

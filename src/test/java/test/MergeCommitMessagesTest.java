@@ -29,19 +29,21 @@ class MergeCommitMessagesTest extends SuiteTestSupport {
   }
 
   @Test
-  void initialMessagePrefersMatchingDefault() {
-    TestAssert.eq("squash 优先压缩默认值", "sq",
-                  MergeCommitMessages.initial(true, "sq", "merge", "title"));
-    TestAssert.eq("非 squash 优先合并默认值", "merge",
-                  MergeCommitMessages.initial(false, "sq", "merge", "title"));
-    TestAssert.eq("压缩默认值为空退化到合并默认值", "merge",
-                  MergeCommitMessages.initial(true, "", "merge", "title"));
-    TestAssert.eq("合并默认值为空退化到压缩默认值", "sq",
-                  MergeCommitMessages.initial(false, "sq", "", "title"));
-    TestAssert.eq("两者皆空退化到标题", "title",
-                  MergeCommitMessages.initial(true, "", "  ", "title"));
+  void initialMessageIsEmptyToAvoidDuplicateTitle() {
+    // GitLab 会把自定义提交信息追加到自动生成的标题之后：预填 commitMessage 就会重复
+    TestAssert.eq("默认提交信息为空", "", MergeCommitMessages.initialMessage());
+  }
+
+  @Test
+  void defaultMessageShownInHint() {
+    TestAssert.eq("squash 展示压缩默认值", "sq",
+                  MergeCommitMessages.defaultMessage(true, "sq", "merge", "title"));
+    TestAssert.eq("非 squash 展示合并默认值", "merge",
+                  MergeCommitMessages.defaultMessage(false, "sq", "merge", "title"));
+    TestAssert.eq("默认值为空退化到标题", "title",
+                  MergeCommitMessages.defaultMessage(false, "", "  ", "title"));
     TestAssert.eq("全空返回空串", "",
-                  MergeCommitMessages.initial(false, null, null, null));
+                  MergeCommitMessages.defaultMessage(false, null, null, null));
   }
 
   @Test
